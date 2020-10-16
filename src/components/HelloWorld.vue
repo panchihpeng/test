@@ -1,8 +1,7 @@
 <template>
   <div class="hello">
-
     <div>
-      输入园所ID (默认南京实验幼儿园): <input v-model.trim="gid">
+      输入园所ID (默认南京市实验幼儿园): <input v-model.trim="gid">
       <button @click="getAllData">确认</button>
     </div>
 
@@ -38,11 +37,14 @@
             <th>日期</th>
             <th>出勤</th>
             <th>测温</th>
+            <th>报警</th>
             <th>睡眠</th>
             <th>运动</th>
             <th>区角</th>
-            <th>报警</th>
-            <th>电量</th>
+
+            <th>手环电量</th>
+            <th>手环版本</th>
+            <th>手环上传版本时间</th>
           </thead>
           <tbody>
             <template v-for="(item, index) in tableData">
@@ -51,21 +53,26 @@
                 <td>{{ item.List[0].date }}</td>
                 <td :class="{green: item.List[0].isAttendance, pink:!item.List[0].isAttendance }">{{ item.List[0].isAttendance ? '√' : 'X' }}</td>
                 <td :class="{green: item.List[0].isTemp , pink:!item.List[0].isTemp }">{{ item.List[0].isTemp ? '√' : 'X' }}</td>
+                <td :class="{green: item.List[0].isWarn, pink:!item.List[0].isWarn }">{{ item.List[0].isWarn ? '√' : 'X' }}</td>
                 <td :class="{green: item.List[0].isSleep, pink:!item.List[0].isSleep }">{{ item.List[0].isSleep ? '√' : 'X' }}</td>
                 <td :class="{green: item.List[0].isSport, pink:!item.List[0].isSport }">{{ item.List[0].isSport ? '√' : 'X' }}</td>
                 <td :class="{green: item.List[0].isAngle, pink:!item.List[0].isAngle }">{{ item.List[0].isAngle ? '√' : 'X' }}</td>
-                <td :class="{green: item.List[0].isWarn, pink:!item.List[0].isWarn }">{{ item.List[0].isWarn ? '√' : 'X' }}</td>
-                <td :class="{green: item.List[0].isBattery,pink:!item.List[0].isBattery }">{{ item.List[0].isBattery ? '√' : 'X' }}</td>
+                <td :class="{green: item.List[0].isBattery,pink:!item.List[0].isBattery }">{{ item.List[0].isBattery ? item.List[0].isBattery : 'X' }}</td>
+                <td :class="{green: item.List[0].version,pink:!item.List[0].version }">{{ item.List[0].version ? item.List[0].version : 'X' }}</td>
+                <td :class="{green: item.List[0].versiontime,pink:!item.List[0].versiontime }">{{ item.List[0].versiontime ? item.List[0].versiontime : 'X' }}</td>
               </tr>
               <tr v-for="(ele,inx) in item.List.length-1" :key="index+'-'+inx">
                 <td>{{ item.List[ele].date }}</td>
                 <td :class="{green: item.List[ele].isAttendance, pink:!item.List[ele].isAttendance }">{{ item.List[ele].isAttendance ? '√' : 'X' }}</td>
                 <td :class="{green: item.List[ele].isTemp, pink:!item.List[ele].isTemp }">{{ item.List[ele].isTemp ? '√' : 'X' }}</td>
+                <td :class="{green: item.List[ele].isWarn, pink:!item.List[ele].isWarn }">{{ item.List[ele].isWarn ? '√' : 'X' }}</td>
                 <td :class="{green: item.List[ele].isSleep, pink:!item.List[ele].isSleep }">{{ item.List[ele].isSleep ? '√' : 'X' }}</td>
                 <td :class="{green: item.List[ele].isSport , pink:!item.List[ele].isSport }">{{ item.List[ele].isSport ? '√' : 'X' }}</td>
                 <td :class="{green: item.List[ele].isAngle, pink:!item.List[ele].isAngle}">{{ item.List[ele].isAngle ? '√' : 'X' }}</td>
-                <td :class="{green: item.List[ele].isWarn, pink:!item.List[ele].isWarn }">{{ item.List[ele].isWarn ? '√' : 'X' }}</td>
-                <td :class="{green: item.List[ele].isBattery ,pink:!item.List[ele].isBattery }">{{ item.List[ele].isBattery ? '√' : 'X' }}</td>
+
+                <td :class="{green: item.List[ele].isBattery ,pink:!item.List[ele].isBattery }">{{ item.List[ele].isBattery ? item.List[ele].isBattery : 'X' }}</td>
+                <td :class="{green: item.List[ele].version,pink:!item.List[ele].version }">{{ item.List[ele].version ? item.List[ele].version : 'X' }}</td>
+                <td :class="{green: item.List[ele].versiontime,pink:!item.List[ele].versiontime }">{{ item.List[ele].versiontime ? item.List[ele].versiontime : 'X' }}</td>
               </tr>
             </template>
           </tbody>
@@ -158,6 +165,30 @@
           </tbody>
         </table>
 
+        <h1>基站数据</h1>
+        <button @click="baseStationList">
+          查询
+        </button>
+        <table>
+          <thead>
+            <th>班级</th>
+            <th>Mac</th>
+            <th>版本</th>
+            <th>类型</th>
+            <th>手表与蓝牙通信时间</th>
+            <th>最后一次联网时间</th>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in stationList" :key="index">
+              <td>{{ item.classname }}</td>
+              <td>{{ item.mac }}</td>
+              <td>{{ item.version }}</td>
+              <td>{{ item.basetype === 'lowhz' ? '低频' : '蓝牙' }}</td>
+              <td>{{ item.lastworktime }}</td>
+              <td>{{ item.lastonline }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -165,7 +196,7 @@
 </template>
 
 <script>
-import { getStudentList, getAttendanceList, getClassList, getTempList, getSleepList, getSportList, getAngleList, getWarnList, getBatteryList, getBeaconBatteryList } from '@/api/index'
+import { getStudentList, getAttendanceList, getClassList, getTempList, getSleepList, getSportList, getAngleList, getWarnList, getBatteryList, getBeaconBatteryList, getBaseStationList, getWatchVersionList } from '@/api/index'
 import _ from 'lodash'
 import dayjs from 'dayjs'
 export default {
@@ -181,6 +212,7 @@ export default {
       count: 0,
       loading: false,
       beaconList: [],
+      stationList: [],
       classStatic: [],
       personStatic: [],
       options: [],
@@ -217,6 +249,14 @@ export default {
 
       this.dateList = dateList
     },
+    baseStationList() {
+      getBaseStationList({
+        gid: this.gid || 6899,
+        classid: this.id
+      }).then(res => {
+        this.stationList = res
+      })
+    },
     async search() {
       // 基础学生
       this.tips = '不要再次点击查询按钮,请耐心等待!'
@@ -252,6 +292,15 @@ export default {
           personId: `${personid}`
         }
       })
+
+      const classByWatch = classStudentsList.map(({ personid }) => {
+        return {
+          personId: `${personid}`
+        }
+      })
+
+      // 信标
+      await this.baseStationList()
 
       // 考勤
       const attendanceListRes = []
@@ -525,12 +574,25 @@ export default {
         const groupByDate = _.groupBy(groupByMacForWarn[mac], 'date')
 
         const List = Object.keys(groupByDate).map((date) => {
-          // const dateList = groupByDate[date].sort((a, b) => {
-          //   return new Date(a.checktime).getTime() - new Date(b.checktime).getTime()
-          // })
+          const flag = _.chunk(groupByDate[date].sort((a, b) => {
+            return new Date(a.checktime).getTime() - new Date(b.checktime).getTime()
+          }), 2).map((item) => {
+            if (item.length === 1) {
+              return true
+            } else if (item.length === 2) {
+              if ((new Date(item[1].checktime).getTime() - new Date(item[0].checktime).getTime()) >= 30 * 60 * 1000) {
+                return true
+              } else {
+                return false
+              }
+            }
+          }).some((item) => item)
 
-          return date
-        })
+          if (flag) {
+            return date
+          }
+        }).filter(item => item)
+
         return {
           mac,
           List
@@ -587,9 +649,20 @@ export default {
 
       const batteryStudentsList = Object.keys(groupByPersonForBatterry).map((person) => {
         const personList = groupByPersonForBatterry[person]
+
+        const groupByDate = _.groupBy(personList, 'date')
+
+        const dateList = Object.keys(groupByDate).map((date) => {
+          // const dateList =
+          return {
+            date,
+            battery: _.last(groupByDate[date].sort((a, b) => new Date(a.batterytime).getTime() - new Date(b.batterytime).getTime())).battery
+          }
+        })
         return {
           personId: person,
-          List: [... new Set(personList.map(({ date }) => date))]
+          List: [... new Set(personList.map(({ date }) => date))],
+          dateList
         }
       })
 
@@ -598,6 +671,7 @@ export default {
         for (const battery of batteryStudentsList) {
           if (stu.personId === battery.personId) {
             stu.List = battery.List
+            stu.dateList = battery.dateList
           }
         }
       }
@@ -609,7 +683,7 @@ export default {
             for (const aDate of student.List) {
               if (battery.List) {
                 if (battery.List.includes(aDate.date)) {
-                  aDate.isBattery = true
+                  aDate.isBattery = battery.dateList.filter(({ date }) => date === aDate.date)[0].battery
                 } else {
                   aDate.isBattery = false
                 }
@@ -620,6 +694,85 @@ export default {
           }
         }
       }
+
+      // 手环版本
+
+      const watchVersionRes = []
+
+      for (const date of this.dateList) {
+        const res = await getWatchVersionList({
+          starttime: `${date.date} 00:00:00`,
+          endtime: `${date.date} 23:59:59`,
+          classid: this.id,
+          gid: this.gid || 6899
+        })
+        for (const item of res) {
+          item.date = `${date.date}`
+        }
+        watchVersionRes.push(...res)
+      }
+
+      const groupByPersonForWatchVersionList = _.groupBy(watchVersionRes, 'personid')
+
+      const watchVersionList = Object.keys(groupByPersonForWatchVersionList).map((personid) => {
+        const personList = groupByPersonForWatchVersionList[personid]
+
+        const groupByDate = _.groupBy(groupByPersonForWatchVersionList[personid], 'date')
+
+        const dateList = Object.keys(groupByDate).map((date) => {
+          const watchInfo = _.last(groupByDate[date].sort((a, b) => new Date(a.versiontime).getTime() - new Date(b.versiontime).getTime()))
+
+          const { version, versiontime } = watchInfo
+
+          return {
+            date,
+            version,
+            versiontime
+          }
+        })
+
+        return {
+          personId: personid,
+          List: [... new Set(personList.map(({ date }) => date))],
+          dateList
+        }
+      })
+
+      // classByWatch
+      for (const stu of classByWatch) {
+        for (const watch of watchVersionList) {
+          if (stu.personId === watch.personId) {
+            stu.List = watch.List
+            stu.dateList = watch.dateList
+          }
+        }
+      }
+
+      //
+      // 考勤 merge 测温 merge 睡眠 merge 运动 merge 区角 merge 报警 merge 电量 merge version
+      for (const student of attendanceStudentsList) {
+        for (const watch of classByWatch) {
+          if (student.personId === watch.personId) {
+            for (const aDate of student.List) {
+              if (watch.List) {
+                if (watch.List.includes(aDate.date)) {
+                  const watchObj = watch.dateList.filter(({ date }) => date === aDate.date)[0]
+                  aDate.version = watchObj.version
+                  aDate.versiontime = watchObj.versiontime
+                } else {
+                  aDate.version = ''
+                  aDate.versiontime = ''
+                }
+              } else {
+                aDate.version = ''
+                aDate.versiontime = ''
+              }
+            }
+          }
+        }
+      }
+
+      // getWatchVersionList
 
       // 信标电量
       const beaconBatteryRes = []
@@ -704,7 +857,7 @@ export default {
 
       this.tips = ''
       this.loading = false
-      console.log(personStatic, 'attendanceListRes')
+      console.log(attendanceStudentsList, 'attendanceListRes')
     }
   }
 }

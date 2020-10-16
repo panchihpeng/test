@@ -156,11 +156,28 @@ export const getBatteryList = (params) => {
   })
 }
 
+// 获取学生手环版本信息
+
+export const getWatchVersionList = (params) => {
+  return get({
+    path: '/ywt/bdb/watchversionlist',
+    params
+  })
+}
+
 // 获取信标电量信息
 
 export const getBeaconBatteryList = (params) => {
   return get({
     path: '/ywt/bdb/beaconbatterylist',
+    params
+  })
+}
+
+// 获取基站信息
+export const getBaseStationList = (params) => {
+  return get({
+    path: '/ywt/bdb/basestationlist',
     params
   })
 }
